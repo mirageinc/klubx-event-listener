@@ -10,7 +10,7 @@ export async function get_erc721_transfers(contract_address, token_id) {
 
   contract_address = contract_address.toLowerCase();
   const tokenId_hex = token_id.toString(16);
-  const data = "0x" + tokenId_hex.padStart(67 - tokenId_hex.length, "0");
+  const data = "0x" + tokenId_hex.padStart(68 - tokenId_hex.length, "0");
 
   contract_address = contract_address.toLowerCase();
 
@@ -20,7 +20,7 @@ export async function get_erc721_transfers(contract_address, token_id) {
     concat('0x', substring(topics[3] from 27)) AS receiver,
     ethereum.hex_to_int(ethereum.skip_zeros(data)) AS token_id
     from   ethereum.log
-    where  contract_address = ${contract_address} and
+    where  lower(contract_address) = ${contract_address} and
     topics[1] = '0x05af636b70da6819000c49f85b21fa82081c632069bb626f30932034099107d8' and
     data = ${data};`;
   else
@@ -29,12 +29,12 @@ export async function get_erc721_transfers(contract_address, token_id) {
     concat('0x', substring(topics[3] from 27)) AS receiver,
     ethereum.hex_to_int(ethereum.skip_zeros(topics[4])) AS token_id
     from   ethereum.log
-    where  contract_address = ${contract_address} and
+    where  lower(contract_address) = ${contract_address} and
+    topics[1] = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' and 
     topics[4] = ${data};`;
 
   return res;
 }
 
-console.log(
-  await get_erc721_transfers("0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a", 7551)
-);
+
+console.log(await get_erc721_transfers("0xb7f7f6c52f2e2fdb1963eab30438024864c313f6", 9691));
